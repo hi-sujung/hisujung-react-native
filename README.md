@@ -2,7 +2,7 @@
 
 구성:
 screens폴더 - screen들로, 파일명과 같은 함수명을 export함
-src/App.js - 필요한 화면파일들 import해서 화면 구성으로만 쓰임
+/   src/App.js - 필요한 화면파일들 import해서 화면 구성으로만 쓰임
 
 src/App.js에서 필요한 screen파일을 사용할 이름으로 import하고, App함수 내에서 <Stack.screen></> 태그 안에서 사용
 
