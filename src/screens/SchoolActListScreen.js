@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-const API_URL = 'http://3.39.104.119/externalact/';
+const API_URL = 'http://3.39.104.119/univactivity/';
 
 export default function ActListScreen() {
     const [activity, setActivity] = useState([]);
@@ -47,7 +47,7 @@ export default function ActListScreen() {
         style={styles.linearGradient}
       >
         <View style={styles.header}>
-          <TouchableOpacity  onPress={handleHomePress} style={styles.homeButton}>
+          <TouchableOpacity onPress={handleHomePress} style={styles.homeButton}>
             <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
           </TouchableOpacity>
           <TouchableOpacity  onPress={handleActListPress}>
@@ -92,7 +92,7 @@ export default function ActListScreen() {
           onPress={() => navigation.navigate('Activity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
         >
           <View style={styles.activityDetails}>
-            <Text style={styles.activityCategory}>대외활동</Text>
+            <Text style={styles.activityCategory}>교내활동</Text>
             {/* <Text style={styles.activityDday}>D-10</Text> */}
           </View>
           <Text style={styles.activityItemTitle}>{item.title}</Text>

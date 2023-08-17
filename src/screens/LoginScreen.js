@@ -7,7 +7,7 @@ import MainComponent from './myportfolio';
 import EmailScreen from './../screens/EmailScreen';
 import { useAuth } from './../utils/AuthContext';
 
-const API_URL = 'http://192.168.0.27:8080/member/login';
+const API_URL = 'http://3.39.104.119/member/login';
 
 
 function LoginScreen({ navigation }) {
@@ -40,8 +40,7 @@ function LoginScreen({ navigation }) {
 
         console.log('login successfull');
 
-        // navigation.navigate('Main'); // main.js 화면으로 이동
-        navigation.navigate('ActList');
+        navigation.navigate('Main'); // main.js 화면으로 이동
       } else {
         setShowSuccessMessage(false);
         setShowErrorText(true);

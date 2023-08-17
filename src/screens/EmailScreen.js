@@ -21,7 +21,7 @@ export default function EmailScreen() {
     try {
       const fullEmail = email + "@sungshin.ac.kr";
 
-      const response = await axios.post('http://3.39.104.119:8080/member/join/mailConfirm', null, {
+      const response = await axios.post('http://3.39.104.119/member/join/mailConfirm', null, {
         params: {
           email: fullEmail,
         },

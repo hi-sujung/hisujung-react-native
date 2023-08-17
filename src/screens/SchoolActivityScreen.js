@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './../utils/AuthContext';
 
-const API_URL = 'http://3.39.104.119/externalact/id';
+const API_URL = 'http://3.39.104.119/univactivity/id';
 const R_API_URL = 'http://3.39.104.119:5000/recommend/univ?activity_name=60';
 
 export default function ActivityScreen({ route }) {
@@ -135,7 +135,7 @@ export default function ActivityScreen({ route }) {
         <ScrollView contentContainerStyle={styles.activityList}>
           <View style={styles.activityItem}>
             <View style={styles.activityDetails}>
-              <Text style={styles.activityCategory}>대외활동</Text>
+              <Text style={styles.activityCategory}>교내활동</Text>
               {/* <Text style={styles.activityDday}>D-10</Text> */}
             </View>
             <ScrollView>
@@ -155,7 +155,7 @@ export default function ActivityScreen({ route }) {
 
         {/* 추천 게시물 */}
         <View style={styles.recommended}>
-          <Text style={styles.recommendedTitle}>추천 게시물</Text>
+          {/* <Text style={styles.recommendedTitle}>추천 게시물</Text>
           <FlatList
             data={setRecActivityData}
             keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
@@ -167,7 +167,7 @@ export default function ActivityScreen({ route }) {
                <Text style={styles.recommendedItemTitle}>{item.title}</Text>
              </TouchableOpacity>
           )}
-          />
+          /> */}
 
           <TouchableOpacity style={styles.recommendedItem}>
             <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
