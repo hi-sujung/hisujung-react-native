@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import { NavigationContainer } from '@react-navigation/native';
-import MainComponent from './myportfolio'; 
+import MainComponent from './myportfolioScreen'; 
 import EmailScreen from './../screens/EmailScreen';
 import { useAuth } from './../utils/AuthContext';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button } from 'react-native'; // Import TouchableOpacity
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, FlatList } from 'react-native'; // Import TouchableOpacity
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
@@ -156,9 +156,9 @@ export default function ActivityScreen({ route }) {
         {/* 추천 게시물 */}
         <View style={styles.recommended}>
           <Text style={styles.recommendedTitle}>추천 게시물</Text>
-          <FlatList
+          {/* <FlatList
             data={setRecActivityData}
-            keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
+            keyExtractor={(item) => item.univ_activity_id.toString()} // Assuming 'id' is a unique identifier
             renderItem={({ item }) => (
               <TouchableOpacity
               style={styles.recommendedItem}
@@ -167,7 +167,7 @@ export default function ActivityScreen({ route }) {
                <Text style={styles.recommendedItemTitle}>{item.title}</Text>
              </TouchableOpacity>
           )}
-          />
+          /> */}
 
           <TouchableOpacity style={styles.recommendedItem}>
             <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>

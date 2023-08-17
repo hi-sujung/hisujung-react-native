@@ -27,11 +27,11 @@ export default function ActListScreen() {
       };
     
       const handleActivityPress = () => {
-        navigation.navigate('Activity');
+        navigation.navigate('SchoolActivity');
       };
 
       const handleActListPress = () => {
-        navigation.navigate('ActList'); 
+        navigation.navigate('SchoolActList'); 
       };
 
       const handleHomePress = () => {
@@ -89,7 +89,7 @@ export default function ActListScreen() {
       renderItem={({ item }) => (
         <TouchableOpacity
           style={styles.activityItem}
-          onPress={() => navigation.navigate('Activity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
+          onPress={() => navigation.navigate('SchoolActivity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
         >
           <View style={styles.activityDetails}>
             <Text style={styles.activityCategory}>교내활동</Text>

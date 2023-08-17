@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import myportfolioScreen from './myportfolio'; // myportfolio.js 파일의 컴포넌트를 import
+import myportfolioScreen from './myportfolioScreen'; // myportfolio.js 파일의 컴포넌트를 import
 
 const Stack = createStackNavigator();
 
@@ -21,9 +21,9 @@ export default function MainScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.outerBox}>
           <View style={styles.row}>
-            {/* <TouchableOpacity onPress={() => navigation.navigate('myportfolio')} style={[styles.button, styles.firstButton, { backgroundColor: '#CCA1FF', borderColor: 'transparent' }]}>
+            <TouchableOpacity onPress={() => navigation.navigate('PortfolioList')} style={[styles.button, styles.firstButton, { backgroundColor: '#CCA1FF', borderColor: 'transparent' }]}>
               <Text style={styles.buttonText}>포트폴리오 {'\n'} 관리</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <View style={styles.buttonGroup}>
               <TouchableOpacity onPress={() => navigation.navigate('SchoolActList')} style={[styles.button, styles.secondButton, { backgroundColor: '#DAD2DE', borderColor: 'transparent' }]}>
                 <Text style={styles.buttonText}>교내활동 {'\n'} 조회</Text>
