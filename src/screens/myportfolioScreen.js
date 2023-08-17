@@ -1,5 +1,5 @@
 import React, { useState, useEffect  } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
@@ -20,6 +20,7 @@ export default function myportfolioScreen({ route }) {
   const [editedTitle, setEditedTitle] = useState('');
   const [editedSubTitle, setEditedSubTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
  // const [portfolio, setPortfolio] = useState([]);
   const { token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation(); // Initialize navigation
@@ -129,6 +130,15 @@ export default function myportfolioScreen({ route }) {
     navigation.navigate('Main'); 
   };
 
+  const handleDelete = () => {
+    setShowPopup(true); // 팝업 표시
+  };
+
+  const cancelDelete = () => {
+    setShowPopup(false); // 팝업 닫기
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -167,7 +177,15 @@ export default function myportfolioScreen({ route }) {
 
       <View style={styles.main}>
         <View style={styles.portfolioInfo}>
-          <Text style={styles.portfolioName}>{editedTitle}</Text>
+          {isEditMode ? ( // 편집 모드일 때
+            <TextInput
+              style={styles.portfolioName}
+              value={editedTitle}
+              onChangeText={handleTitleChange}
+             />
+            ) : ( // 편집 모드가 아닐 때
+           <Text style={styles.portfolioName}>{portfolioData.title}</Text>
+           )}
           <TouchableOpacity style={styles.editButton} onPress={toggleEditMode}>
             <Text
             style={styles.editButtonText}
@@ -209,6 +227,29 @@ export default function myportfolioScreen({ route }) {
       ) : ( // 편집 모드가 아닐 때
         <Text style={styles.bigInfoInput}>{portfolioData.description}</Text>
       )}
+
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+            <Text style={styles.deleteButtonText}>삭제</Text>
+          </TouchableOpacity>
+
+          <Modal
+        visible={showPopup}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowPopup(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+            <Text>이 포트폴리오를 삭제하시겠습니까?</Text>
+            <Button title="예" onPress={cancelDelete} />
+            <Button title="아니오" onPress={cancelDelete} />
+          </View>
+        </View>
+      </Modal>
+
+
+
+
         {isEditMode && (
           <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
             <Text style={styles.saveButtonText}>저장하기</Text>
@@ -315,6 +356,19 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     color: 'rgba(74, 85, 162, 1)',
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    position: 'absolute',
+    bottom: 300, // 아래 여백
+    right: 20, // 오른쪽 여백
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: 'red',
     fontWeight: 'bold',
   },
   name: {

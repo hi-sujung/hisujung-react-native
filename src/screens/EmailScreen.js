@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth } from './../utils/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function EmailScreen() {
@@ -11,6 +12,7 @@ export default function EmailScreen() {
   const [verificationCode, setVerificationCode] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorText, setShowErrorText] = useState(false);
+  const navigation = useNavigation();
 
   const handleEmailSubmit = async () => {
     if (!email) {
@@ -58,6 +60,10 @@ export default function EmailScreen() {
 
   const windowWidth = Dimensions.get('window').width;
 
+  const handleBackPress = () => {
+    navigation.navigate('Login'); 
+  };
+
   return (
     <LinearGradient
       colors={['#E2D0F8', '#A0BFE0']}
@@ -67,7 +73,7 @@ export default function EmailScreen() {
     >
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headingContainer}>
-          <TouchableOpacity style={styles.backButton}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
             <AntDesign name="arrowleft" size={20} color="white" />
           </TouchableOpacity>
           <Text style={styles.title}>이메일 인증</Text>
