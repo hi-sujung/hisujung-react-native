@@ -6,13 +6,13 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './../utils/AuthContext';
 
-const API_URL = 'http://192.168.0.27:8080/externalact/id';
-const R_API_URL = 'http://3.39.104.119:5000/recommend/univ?activity_name=60';
+const API_URL = 'http://3.39.104.119/externalact/id';
+const R_API_URL = 'http://3.39.104.119:8000/recommend/univ?activity_name=';
 
 export default function ActivityScreen({ route }) {
     const { activityId } = route.params;
     const [activityData, setActivityData] = useState({});
-    const [recActivityData, setRecActivityData] = useState({});
+    const [recActivityData, setRecActivityData] = useState([]);
     const { token } = useAuth();
     const navigation = useNavigation();
   
@@ -61,7 +61,7 @@ export default function ActivityScreen({ route }) {
         };
 
     try {
-      const response = await axios.get(R_API_URL);
+      const response = await axios.get(`${R_API_URL}${recActivityData}`);
       if (response.status === 200) {
         setRecActivityData(response.data);
       }

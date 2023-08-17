@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-const API_URL = 'http://192.168.0.27:8080/externalact/';
+const API_URL = 'http://3.39.104.119/externalact/';
 
 export default function ActListScreen() {
     const [activity, setActivity] = useState([]);

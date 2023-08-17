@@ -3,14 +3,14 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import { NavigationContainer } from '@react-navigation/native';
-import MainComponent from './myportfolio'; 
+import MainComponent from './myportfolioScreen'; 
 import EmailScreen from './../screens/EmailScreen';
 import { useAuth } from './../utils/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
-const API_URL = 'http://192.168.0.27:8080/member/login';
+const API_URL = 'http://3.39.104.119/member/login';
 
-
-function LoginScreen({ navigation }) {
+export function LoginScreen() {
 
   const { login } = useAuth(); 
   const [email, setEmail] = useState('');
@@ -18,6 +18,7 @@ function LoginScreen({ navigation }) {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorText, setShowErrorText] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigation = useNavigation();
   
 
   const handleLogin = async () => {
@@ -41,7 +42,7 @@ function LoginScreen({ navigation }) {
         console.log('login successfull');
 
         // navigation.navigate('Main'); // main.js 화면으로 이동
-        navigation.navigate('ActList');
+        navigation.navigate('Main');
       } else {
         setShowSuccessMessage(false);
         setShowErrorText(true);
@@ -85,7 +86,7 @@ function LoginScreen({ navigation }) {
         {showErrorText && (
           <Text style={styles.errorMessage}>{errorMessage}</Text>
         )}
-        <TouchableOpacity onPress={() => navigation.navigate('Email')}>
+        <TouchableOpacity onPress={() => navigation.navigate('email')}>
           <Text style={styles.signupText}>계정이 없으신가요? <Text style={styles.signupLink}>회원가입</Text></Text>
         </TouchableOpacity>
       </View>

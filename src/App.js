@@ -6,13 +6,16 @@ import axios from 'axios';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AuthProvider } from './utils/AuthContext'; // app에서 navigation을 AuthProvider로 감싸야 함
-import MainComponent from './screens/myportfolio';
+
 import LoginScreen from './screens/LoginScreen';
 import ActivityScreen from './screens/ActivityScreen';
 import ActListScreen from './screens/ActListScreen';
+import ChatScreen from './screens/chatBot';
 import RegisterScreen from './screens/RegisterScreen';
 import EmailScreen from './screens/EmailScreen';
-
+import myportfolioScreen from './screens/myportfolioScreen';
+import PortfolioListScreen from './screens/PortfolioListScreen';
+import MainComponent from './screens/main';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -37,6 +40,11 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="email"
+          component={EmailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="ActList"
           component={ActListScreen}
           options={{ headerShown: false }}
@@ -44,6 +52,26 @@ export default function App() {
         <Stack.Screen
           name="Activity"
           component={ActivityScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="myportfolioScreen"
+          component={myportfolioScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="chatbot"
+          component={ChatScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="portfolioListScreen"
+          component={PortfolioListScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Main"
+          component={MainComponent}
           options={{ headerShown: false }}
         />
         </Stack.Navigator>

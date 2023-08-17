@@ -1,21 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
-import { useAuth } from './../utils/AuthContext';
+import { useAuth } from '../utils/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default function App() {
+const API_URL = 'http://3.39.104.119/portfolio/id';
+
+
+export default function myportfolioScreen({ route }) {
+ // const { portfolioId } = route.params;
+  const [portfolioData, setActivityData] = useState({});
+
   const [navigationButtons, setNavigationButtons] = useState([]);
   const [selectedButton, setSelectedButton] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [editedSubTitle, setEditedSubTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
+ // const [portfolio, setPortfolio] = useState([]);
   const { token } = useAuth(); // 현재 로그인한 유저의 user, token
-
+  const navigation = useNavigation(); // Initialize navigation
 
   console.log(token)
+  // if (!route.params || !route.params.portfolioId) {
+  //   // Handle the case when portfolioId is not available
+  //   console.log(파람스없음)
+  // }
+
+  useEffect(() => {
+    fetchPortfolioData();
+  }, []);
+
+  const fetchPortfolioData = async () => {
+
+    try {
+      const response = await axios.get(`${API_URL}`);
+      if (response.status === 200) {
+        setPortfolio(response.data.data); // Set the fetched activity data in the state
+      }
+    } catch (error) {
+      console.error('Error fetching activity data:', error);
+    }
+  };
+
   
   const addNavigationButton = () => {
     const newButton = {
@@ -68,15 +97,19 @@ export default function App() {
       description: String(editedContent),
     };
 
-    try {
-      const response = await axios.post('http://3.39.104.119:8080/portfolio/new', token);
-      console.log('서버 응답 데이터:', response.data);
+    // const fetchPortfolioData = async() => {
+    //   try {
+    //     const response = await axios.post(API_URL, token);
+    //     console.log('서버 응답 데이터:', response.data);
+  
+    //     // 여기서 서버 응답 데이터를 활용할 수 있습니다.
+    //     // 예: 성공 메시지를 출력하거나 다른 동작을 수행할 수 있습니다.
+    //   } catch (error) {
+    //     console.error('에러 발생:', error);
+    //   }
 
-      // 여기서 서버 응답 데이터를 활용할 수 있습니다.
-      // 예: 성공 메시지를 출력하거나 다른 동작을 수행할 수 있습니다.
-    } catch (error) {
-      console.error('에러 발생:', error);
-    }
+    // }
+   
   };
 
   return (
@@ -123,7 +156,7 @@ export default function App() {
           </TouchableOpacity>
         </View>
         <Text style={styles.name}>서가은 수정</Text>
-        <Text style={styles.infoLabel}>포트폴리오 제목</Text>
+        <Text style={styles.infoLabel}>포트폴리오 제목<Text style={styles.activityDetails}>{portfolioData.title}</Text></Text>
         <TextInput
           style={styles.infoInput}
           value={editedTitle}
@@ -195,6 +228,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: 10,
     paddingHorizontal: 20,
+  },
+  activityDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
   },
   navButton: {
     backgroundColor: 'white',

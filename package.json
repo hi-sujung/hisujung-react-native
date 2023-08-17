@@ -23,7 +23,8 @@
     "react-native-screens": "~3.22.0",
     "sockjs-client": "^1.6.1",
     "styled-components": "^6.0.5",
-    "webstomp-client": "^1.2.6"
+    "webstomp-client": "^1.2.6",
+    "react-native-web": "~0.19.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth } from './../utils/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function EmailScreen() {
@@ -11,6 +12,7 @@ export default function EmailScreen() {
   const [verificationCode, setVerificationCode] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorText, setShowErrorText] = useState(false);
+  const navigation = useNavigation();
 
   const handleEmailSubmit = async () => {
     if (!email) {
@@ -21,7 +23,9 @@ export default function EmailScreen() {
     try {
       const fullEmail = email + "@sungshin.ac.kr";
 
-      const response = await axios.post('http://3.39.104.119:8080/member/join/mailConfirm', null, {
+      console.log(fullEmail);
+
+      const response = await axios.post('http://3.39.104.119/member/join/mailConfirm', null, {
         params: {
           email: fullEmail,
         },
@@ -39,7 +43,8 @@ export default function EmailScreen() {
 
   const handleVerificationSubmit = async () => {
     try {
-      const response = await axios.get(`http://3.39.104.119:8080/member/join/verify/${verificationCode}`);
+      console.log(verificationCode);
+      const response = await axios.get(`http://3.39.104.119/member/join/verify/${verificationCode}`);
       console.log(response.data);
       if (response.data === String(verificationCode)) {
         
@@ -79,7 +84,7 @@ export default function EmailScreen() {
             style={styles.input}
             placeholder="이메일"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => setEmail(text)}
           />
           <Text style={styles.emilText}>@sungshin.ac.kr</Text>
           <TouchableOpacity style={styles.submitButton} onPress={handleEmailSubmit}>
@@ -98,7 +103,7 @@ export default function EmailScreen() {
             style={[styles.input, styles.verificationInput]}
             placeholder="인증번호"
             value={verificationCode}
-            onChangeText={setVerificationCode}
+            onChangeText={(text) => setVerificationCode(text)}
           />
         </View>
 
@@ -208,7 +213,7 @@ const styles = StyleSheet.create({
   },
   successText: {
     color: 'green',
-    fontSize: 14,
+    fontSize: 11.5,
     alignSelf: 'flex-start',
     marginLeft: 70,
     bottom: 15,
