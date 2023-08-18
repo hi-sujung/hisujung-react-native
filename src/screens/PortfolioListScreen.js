@@ -12,9 +12,6 @@ export default function portfolioListScreen() {
   const [portfolioList, setPortfolioList] = useState([]);
   const { token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation();
-  
-
-  console.log(token)
 
   useEffect(() => {
     fetchPortfolioData();
@@ -33,6 +30,7 @@ export default function portfolioListScreen() {
       console.error('Error fetching activity data:', error);
     }
   };
+  
 
   const handleHomePress = () => {
     navigation.navigate('Main'); 

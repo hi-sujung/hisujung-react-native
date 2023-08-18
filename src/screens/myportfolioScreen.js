@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useAuth } from '../utils/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 
-const API_URL = 'http://3.39.104.119/portfolio/id';
+const API_URL = 'http://3.39.104.119/portfolio/';
 
 
 export default function myportfolioScreen({ route }) {
@@ -24,8 +24,6 @@ export default function myportfolioScreen({ route }) {
  // const [portfolio, setPortfolio] = useState([]);
   const { token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation(); // Initialize navigation
-
-  console.log(token)
   // if (!route.params || !route.params.portfolioId) {
   //   // Handle the case when portfolioId is not available
   //   console.log(파람스없음)
@@ -38,12 +36,39 @@ export default function myportfolioScreen({ route }) {
   const fetchPortfolioData = async () => {
 
     try {
-      const response = await axios.get(`${API_URL}?id=${portfolioId}`);
+      const response = await axios.get(`${API_URL}id?id=${portfolioId}`);
       if (response.status === 200) {
         setPortfolio(response.data.data); // Set the fetched activity data in the state
       }
     } catch (error) {
       console.error('Error fetching activity data:', error);
+    }
+  };
+
+  const EditPortfolioData = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+  
+    try {
+      const response = await axios.post(
+        `${API_URL}update/id?id=${portfolioId}`,
+        { headers },
+        {
+          title: editedTitle,
+          urlLink: editedSubTitle,
+          description: editedContent,
+        }
+      );
+  
+      if (response.status === 200) {
+        setPortfolio(response.data.data); // Set the fetched activity data in the state
+        conoloe.log('editdddddddddddddddddddddd');
+      } else {
+        console.error('Error editing activity data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error editing activity data:', error);
     }
   };
 
@@ -90,7 +115,6 @@ export default function myportfolioScreen({ route }) {
   const handleSaveButtonClick = () => {
     // 저장 버튼 클릭 시 편집 모드 비활성화 등의 처리
     setIsEditMode(false);
-    // 여기서 변경된 editedTitle을 서버로 보내어 업데이트 처리
   };
 
 
@@ -102,7 +126,7 @@ export default function myportfolioScreen({ route }) {
       return button;
     });
 
-    setNavigationButtons(updatedButtons);
+    // setNavigationButtons(updatedButtons);
     setIsEditMode(false);
 
     const data = {
