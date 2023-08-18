@@ -63,7 +63,7 @@ export default function myportfolioScreen({ route }) {
   
       if (response.status === 200) {
         setPortfolio(response.data.data); // Set the fetched activity data in the state
-        conoloe.log('editdddddddddddddddddddddd');
+        conloe.log('editdddddddddddddddddddddd');
       } else {
         console.error('Error editing activity data:', response.status);
       }
@@ -125,28 +125,17 @@ export default function myportfolioScreen({ route }) {
       }
       return button;
     });
-
-    // setNavigationButtons(updatedButtons);
-    setIsEditMode(false);
-
-    const data = {
-      title: String(editedTitle),
-      urllink: String(editedSubTitle),
-      description: String(editedContent),
-    };
-
-    // const fetchPortfolioData = async() => {
-    //   try {
-    //     const response = await axios.post(API_URL, token);
-    //     console.log('서버 응답 데이터:', response.data);
   
-    //     // 여기서 서버 응답 데이터를 활용할 수 있습니다.
-    //     // 예: 성공 메시지를 출력하거나 다른 동작을 수행할 수 있습니다.
-    //   } catch (error) {
-    //     console.error('에러 발생:', error);
-    //   }
-
-    // }
+    setNavigationButtons(updatedButtons); // 수정된 버튼 정보를 업데이트
+  
+    // 이제 EditPortfolioData 함수 호출
+    try {
+      await EditPortfolioData(); // 서버에 수정된 데이터를 저장
+    } catch (error) {
+      console.error('Error editing portfolio data:', error);
+    }
+  
+    setIsEditMode(false); // 편집 모드 비활성화
    
   };
 
