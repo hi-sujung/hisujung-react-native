@@ -122,6 +122,10 @@ export default function ActivityScreen({ route }) {
         navigation.navigate('Activity', { activityId: id });
       };
 
+      const handleHomePress = () => {
+        navigation.navigate('Main'); 
+      };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -131,9 +135,9 @@ export default function ActivityScreen({ route }) {
         style={styles.linearGradient}
       >
         <View style={styles.header}>
-          <View style={styles.homeButton}>
+          <TouchableOpacity onPress={handleHomePress} style={styles.homeButton}>
             <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity  onPress={handleActListPress}>
             <Text style={styles.headerTitle}>게시물 목록</Text>
             </TouchableOpacity>

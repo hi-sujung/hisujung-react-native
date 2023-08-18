@@ -51,6 +51,10 @@ export default function ActListScreen({route}) {
       const handleActListPress = () => {
         navigation.navigate('ActList'); 
       };
+
+      const handleHomePress = () => {
+        navigation.navigate('Main'); 
+      };
   
   return (
     <View style={styles.container}>
@@ -61,7 +65,7 @@ export default function ActListScreen({route}) {
         style={styles.linearGradient}
       >
         <View style={styles.header}>
-          <TouchableOpacity style={styles.homeButton}>
+          <TouchableOpacity onPress={handleHomePress} style={styles.homeButton}>
             <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
           </TouchableOpacity>
           <TouchableOpacity  onPress={handleActListPress}>

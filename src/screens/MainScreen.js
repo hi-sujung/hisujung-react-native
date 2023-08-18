@@ -3,7 +3,10 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import myportfolioScreen from './myportfolioScreen'; // myportfolio.js 파일의 컴포넌트를 import
+import PortfolioListScreen from './PortfolioListScreen'; // myportfolio.js 파일의 컴포넌트를 import
+import NoticeLikeScreen from './viewNoticeLike'
+import chatBotScreen from './ChatScreen'; 
+import { AntDesign } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +19,9 @@ export default function MainScreen({ navigation }) {
       style={styles.linearGradient}
     >
       <View style={styles.titleContainer}>
+      <TouchableOpacity onPress={() => navigation.navigate('viewNoticeLike')}>
+      <AntDesign name="hearto" size={24} color="white" style={{ marginleft: 20 }} />
+    </TouchableOpacity>
         <Text style={styles.title}>Hi, 000 수정이🔮</Text>
       </View>
       <View style={styles.container}>
@@ -26,7 +32,7 @@ export default function MainScreen({ navigation }) {
             </TouchableOpacity>
             <View style={styles.buttonGroup}>
               <TouchableOpacity onPress={() => navigation.navigate('SchoolActList')} style={[styles.button, styles.secondButton, { backgroundColor: '#DAD2DE', borderColor: 'transparent' }]}>
-                <Text style={styles.buttonText}>교내활동 {'\n'} 조회</Text>
+                <Text style={styles.buttonText}>공지사항 {'\n'} 조회</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('ActList')} style={[styles.button, styles.thirdButton, { backgroundColor: 'white', borderColor: '#6A6FB3' }]}>
                 <Text style={[styles.buttonText, { color: '#6A6FB3' }]}>대외활동 {'\n'} 조회</Text>
@@ -34,7 +40,7 @@ export default function MainScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.content2}>
-            <Text style={styles.content2title}>오늘의 추천 활동</Text>
+            <Text style={styles.content2title} >오늘의 추천 활동</Text>
             <View style={styles.innerContent}>
               <TouchableOpacity style={styles.todayRecommand}>
                 <Text style={styles.innerSmalltxt}>대외활동</Text>
@@ -43,7 +49,7 @@ export default function MainScreen({ navigation }) {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={styles.chatBotButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('chatBotScreen')} style={styles.chatBotButton}>
           <Text style={styles.chatBotButtonText}>chatBot</Text>
         </TouchableOpacity>
       </View>
@@ -72,7 +78,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'left',
     letterSpacing: 9,
-    top: 80,
+    top: 40, //여기 높이 수정
   },
   container: {
     width: '100%',

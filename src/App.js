@@ -16,6 +16,8 @@ import SchoolActListScreen from './screens/SchoolActListScreen';
 import SchoolActivityScreen from './screens/SchoolActivityScreen';
 import MainScreen from './screens/MainScreen';
 import PortfolioListScreen from './screens/PortfolioListScreen';
+import viewNoticeLike from './screens/viewNoticeLike';
+import ChatScreen from './screens/ChatScreen';
 
 const Stack = createStackNavigator();
 
@@ -49,6 +51,20 @@ export default function App() {
           component={MainScreen}
           options={{ headerShown: false }}
         /> 
+        {/* 좋아요 리스트 */}
+        <Stack.Screen
+          name="viewNoticeLike"
+          component={viewNoticeLike}
+          options={{ headerShown: false }}
+        />
+
+        {/* 챗봇 */}
+        <Stack.Screen
+            name="chatBotScreen"
+            component={ChatScreen}
+            options={{ headerShown: false }}
+          />
+
         {/* 포트폴리오 리스트 */}
         <Stack.Screen
           name="PortfolioList"

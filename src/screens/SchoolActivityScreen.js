@@ -135,7 +135,7 @@ export default function ActivityScreen({ route }) {
         <ScrollView contentContainerStyle={styles.activityList}>
           <View style={styles.activityItem}>
             <View style={styles.activityDetails}>
-              <Text style={styles.activityCategory}>교내활동</Text>
+              <Text style={styles.activityCategory}>공지사항</Text>
               {/* <Text style={styles.activityDday}>D-10</Text> */}
             </View>
             <ScrollView>
