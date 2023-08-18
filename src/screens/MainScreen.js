@@ -39,7 +39,7 @@ export default function MainScreen({ navigation }) {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.content2}>
+          {/* <View style={styles.content2}>
             <Text style={styles.content2title} >오늘의 추천 활동</Text>
             <View style={styles.innerContent}>
               <TouchableOpacity style={styles.todayRecommand}>
@@ -47,7 +47,7 @@ export default function MainScreen({ navigation }) {
                 <Text style={styles.innerTitle}>포트폴리오 관리</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('chatBotScreen')} style={styles.chatBotButton}>
           <Text style={styles.chatBotButtonText}>chatBot</Text>
