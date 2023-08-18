@@ -21,6 +21,8 @@ export default function myportfolioScreen({ route }) {
   const [editedSubTitle, setEditedSubTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [deleteButtonVisible, setDeleteButtonVisible] = useState(true);
+
  // const [portfolio, setPortfolio] = useState([]);
   const { token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation(); // Initialize navigation
@@ -39,36 +41,54 @@ export default function myportfolioScreen({ route }) {
       const response = await axios.get(`${API_URL}id?id=${portfolioId}`);
       if (response.status === 200) {
         setPortfolio(response.data.data); // Set the fetched activity data in the state
+        console.log('상세페이지 불러옴')
       }
     } catch (error) {
       console.error('Error fetching activity data:', error);
     }
   };
 
-  const EditPortfolioData = async () => {
-    const headers = {
-      Authorization: `Bearer ${token}`
-    };
-  
+  // 포트폴리오 편집
+const EditPortfolioData = async (updatedData) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  try {
+    const response = await axios.post(
+      `${API_URL}update/id?id=${portfolioId}`,
+      updatedData,
+      { headers }
+    );
+
+    if (response.status === 200) {
+      console.log('포트폴리오 수정 완료');
+    } else {
+      console.error('포트폴리오 수정 실패:', response.status);
+    }
+  } catch (error) {
+    console.error('포트폴리오 수정 에러:', error);
+  }
+};
+
+  // 포트폴리오 삭제
+  const deletePortfolioData = async () => {
     try {
-      const response = await axios.post(
-        `${API_URL}update/id?id=${portfolioId}`,
-        { headers },
-        {
-          title: editedTitle,
-          urlLink: editedSubTitle,
-          description: editedContent,
-        }
-      );
+      const response = await axios.delete(`${API_URL}portfolio/id?id=${portfolioId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
   
       if (response.status === 200) {
-        setPortfolio(response.data.data); // Set the fetched activity data in the state
-        conloe.log('editdddddddddddddddddddddd');
+        // 포트폴리오 삭제 성공 시 처리
+        console.log('포트폴리오가 삭제되었습니다.');
+        // 여기에 추가적인 처리나 리다이렉트 등을 수행할 수 있습니다.
       } else {
-        console.error('Error editing activity data:', response.status);
+        console.error('Error deleting portfolio:', response.status);
       }
     } catch (error) {
-      console.error('Error editing activity data:', error);
+      console.error('Error deleting portfolio:', error);
     }
   };
 
@@ -109,6 +129,7 @@ export default function myportfolioScreen({ route }) {
 
   const handleEditButtonClick = () => {
     setIsEditMode(true); // "수정" 버튼 클릭 시 편집 모드 활성화
+    setDeleteButtonVisible(false); // "삭제" 버튼 숨김
     // setEditedTitle(portfolioData.title); // 편집 중인 타이틀 초기화
   };
 
@@ -117,34 +138,58 @@ export default function myportfolioScreen({ route }) {
     setIsEditMode(false);
   };
 
-
   const handleSaveButton = async () => {
-    const updatedButtons = navigationButtons.map((button) => {
-      if (button === selectedButton) {
-        return { ...button, title: editedTitle, subTitle: editedSubTitle, content: editedContent };
-      }
-      return button;
-    });
+    const updatedButton = {
+      title: editedTitle,       // 사용자가 편집한 제목
+      subTitle: editedSubTitle, // 사용자가 편집한 부제목
+      content: editedContent,   // 사용자가 편집한 내용
+    };
   
-    setNavigationButtons(updatedButtons); // 수정된 버튼 정보를 업데이트
-  
-    // 이제 EditPortfolioData 함수 호출
     try {
-      await EditPortfolioData(); // 서버에 수정된 데이터를 저장
+      await EditPortfolioData(updatedButton); // 서버에 수정된 데이터를 저장
+      setNavigationButtons([...navigationButtons.map((button) => (button === selectedButton ? updatedButton : button))]); // 수정된 버튼 정보를 업데이트
+      setIsEditMode(false); // 편집 모드 비활성화
+      fetchPortfolioData(); // 수정된 내용을 다시 불러옴
     } catch (error) {
-      console.error('Error editing portfolio data:', error);
+      console.error('포트폴리오 수정 에러:', error);
     }
-  
-    setIsEditMode(false); // 편집 모드 비활성화
-   
   };
+
+  // const handleSaveButton = async () => {
+  //   const updatedButtons = navigationButtons.map((button) => {
+  //     if (button === selectedButton) {
+  //       return { ...button, title: editedTitle, subTitle: editedSubTitle, content: editedContent };
+  //     }
+  //     return button;
+  //   });
+
+  //   // 이제 EditPortfolioData 함수 호출
+  //   try {
+  //     await EditPortfolioData(); // 서버에 수정된 데이터를 저장
+  //   } catch (error) {
+  //     console.error('Error editing portfolio data:', error);
+  //   }
+  
+  //   setNavigationButtons(updatedButtons); // 수정된 버튼 정보를 업데이트
+
+  //   setIsEditMode(false); // 편집 모드 비활성화
+  //   fetchPortfolioData();
+   
+  // };
 
   const handleHomePress = () => {
     navigation.navigate('Main'); 
   };
 
+  // 삭제를 위한 핸들러
   const handleDelete = () => {
     setShowPopup(true); // 팝업 표시
+  };
+  
+  const confirmDelete = () => {
+    deletePortfolioData();
+    setShowPopup(false); // 팝업 닫기
+    navigation.navigate('PortfolioList');
   };
 
   const cancelDelete = () => {
@@ -212,7 +257,8 @@ export default function myportfolioScreen({ route }) {
         <TextInput
           style={styles.infoInput}
           value={editedTitle}
-          onChangeText={handleTitleChange}
+          // onChangeText={handleTitleChange}
+          onChangeText={setEditedTitle}
         />
       ) : ( // 편집 모드가 아닐 때
         <Text style={styles.infoInput}>{portfolioData.title}</Text>
@@ -222,7 +268,8 @@ export default function myportfolioScreen({ route }) {
         <TextInput
           style={styles.infoInput}
           value={editedSubTitle}
-          onChangeText={handleSubTitleChange}
+          // onChangeText={handleSubTitleChange}
+          onChangeText={setEditedSubTitle}
         />
       ) : ( // 편집 모드가 아닐 때
         <Text style={styles.infoInput}>{portfolioData.urlLink}</Text>
@@ -234,16 +281,19 @@ export default function myportfolioScreen({ route }) {
           multiline
           numberOfLines={4}
           value={editedContent}
-          onChangeText={handleContentChange}
+          // onChangeText={handleContentChange}
+          onChangeText={setEditedContent}
           editable={isEditMode}
         />
       ) : ( // 편집 모드가 아닐 때
         <Text style={styles.bigInfoInput}>{portfolioData.description}</Text>
       )}
 
+          {deleteButtonVisible && (
           <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
             <Text style={styles.deleteButtonText}>삭제</Text>
-          </TouchableOpacity>
+         </TouchableOpacity>
+          )}
 
           <Modal
         visible={showPopup}
@@ -254,14 +304,11 @@ export default function myportfolioScreen({ route }) {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
             <Text>이 포트폴리오를 삭제하시겠습니까?</Text>
-            <Button title="예" onPress={cancelDelete} />
+            <Button title="예" onPress={confirmDelete} />
             <Button title="아니오" onPress={cancelDelete} />
           </View>
         </View>
       </Modal>
-
-
-
 
         {isEditMode && (
           <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, FlatList } from 'react-native'; // Import TouchableOpacity
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button } from 'react-native'; // Import TouchableOpacity
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
@@ -7,19 +7,52 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './../utils/AuthContext';
 
 const API_URL = 'http://3.39.104.119/externalact/id';
-const R_API_URL = 'http://3.39.104.119:5000/recommend/univ?activity_name=60';
+const R_API_URL = 'http://3.39.104.119:8000/recommend/external?activity_name=';
+
+const LIKE_URL = 'http://3.39.104.119/externalact/like?actId='
+const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel?id='
 
 export default function ActivityScreen({ route }) {
-  const [heartFilled, setHeartFilled] = useState(false);
-
-  const toggleHeart = () => {
-    setHeartFilled(!heartFilled);
-  };
     const { activityId } = route.params;
     const [activityData, setActivityData] = useState({});
-    const [recActivityData, setRecActivityData] = useState({});
+    const [recActivityData, setRecActivityData] = useState([]);
     const { token } = useAuth();
     const navigation = useNavigation();
+
+    const [heartFilled, setHeartFilled] = useState(false);
+
+  const toggleHeart = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+
+    console.log(activityId)
+    if (heartFilled === false) {
+      try {
+      const response = await axios.post(`${LIKE_URL}${activityId}`,{ headers });
+      if (response.status === 200) {
+        console.log(response.data);
+        setHeartFilled(true);
+      }
+
+      } catch(error) {
+        console.error('Error fetching like:', error);
+      }
+    }
+    else {
+      try{
+      const response2 = await axios.delete(`${LIKECANCEL_URL}${activityId}`,{ headers });
+      if (response2.status === 200) {
+        console.log(response2.data);
+        setHeartFilled(false);
+      }
+      }catch(error) {
+        console.error('Error fetching delete like cancel:', error);
+      }
+    }
+  
+  };
+
   
     useEffect(() => {
       fetchActivityDetail();
@@ -35,18 +68,22 @@ export default function ActivityScreen({ route }) {
         const response = await axios.get(`${API_URL}?id=${activityId}`, { headers });
         if (response.status === 200) {
           setActivityData(response.data);
-          // if (activityData && activityData.content) {
-          //   const formattedContent = activityData.content.replace(/\n/g, '\n');
-          //   console.log('content: ' + formattedContent);
-          // } else {
-          //   console.log('activityData or content is undefined');
-          // }
+          console.log(response.data.isLiked);
+          
+        }
+        if (response.data.isLiked === 0) {
+          setHeartFilled(false);
+        }
+        else if (response.data.isLiked === 1) {
+          setHeartFilled(true);
         }
       } catch (error) {
         console.error('Error fetching activity detail:', error);
       }
       
     };
+
+    
 
     // Frommated Content
     const handleReplace = () => {
@@ -66,9 +103,10 @@ export default function ActivityScreen({ route }) {
         };
 
     try {
-      const response = await axios.get(R_API_URL);
+      const response = await axios.get(`${R_API_URL}${activityId}`);
       if (response.status === 200) {
         setRecActivityData(response.data);
+        console.log(response.data)
       }
     } catch (error) {
       console.error('Error fetching activity detail:', error);
@@ -80,12 +118,8 @@ export default function ActivityScreen({ route }) {
         navigation.navigate('ActList'); 
       };
 
-      const handleActivityPress = () => {
-        navigation.navigate('Activity');
-      };
-
-      const handleHomePress = () => {
-        navigation.navigate('Main'); 
+      const handleActivityPress = (id) => {
+        navigation.navigate('Activity', { activityId: id });
       };
 
   return (
@@ -97,9 +131,9 @@ export default function ActivityScreen({ route }) {
         style={styles.linearGradient}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleHomePress} style={styles.homeButton}>
+          <View style={styles.homeButton}>
             <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
-          </TouchableOpacity>
+          </View>
           <TouchableOpacity  onPress={handleActListPress}>
             <Text style={styles.headerTitle}>게시물 목록</Text>
             </TouchableOpacity>
@@ -143,22 +177,23 @@ export default function ActivityScreen({ route }) {
             <Text style={styles.activitySubTitle}>{activityData.link}</Text>
             <Text style={styles.activityDescription}>{formattedContent}</Text>
             </ScrollView>
-            <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+            </View>
+        </ScrollView>
+
+        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
               <AntDesign
                 name={heartFilled ? 'heart' : 'hearto'}
                 size={20}
                 color={heartFilled ? 'red' : 'black'}
               />
-            </TouchableOpacity>
-            </View>
-        </ScrollView>
+        </TouchableOpacity>
 
         {/* 추천 게시물 */}
         <View style={styles.recommended}>
           <Text style={styles.recommendedTitle}>추천 게시물</Text>
           {/* <FlatList
             data={setRecActivityData}
-            keyExtractor={(item) => item.univ_activity_id.toString()} // Assuming 'id' is a unique identifier
+            keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
             renderItem={({ item }) => (
               <TouchableOpacity
               style={styles.recommendedItem}
@@ -169,19 +204,11 @@ export default function ActivityScreen({ route }) {
           )}
           /> */}
 
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-          {/* 여기에 3개 더 추가 */}
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
+          {recActivityData.map(item => (
+             <TouchableOpacity style={styles.recommendedItem} onPress={() => navigation.push('Activity', {activityId : item.external_act_id})}>
+             <Text style={styles.recommendedItemTitle}>{item.title}</Text>
+           </TouchableOpacity>
+          ))}
         </View>
       </View>
     </View>
@@ -203,7 +230,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  
   homeButton: {
     backgroundColor: 'white',
     borderRadius: 10,
