@@ -83,7 +83,6 @@ const EditPortfolioData = async (updatedData) => {
       if (response.status === 200) {
         // 포트폴리오 삭제 성공 시 처리
         console.log('포트폴리오가 삭제되었습니다.');
-        // 여기에 추가적인 처리나 리다이렉트 등을 수행할 수 있습니다.
       } else {
         console.error('Error deleting portfolio:', response.status);
       }
@@ -117,14 +116,17 @@ const EditPortfolioData = async (updatedData) => {
 
   const handleTitleChange = (text) => {
     setEditedTitle(text);
+    console.log('제목 업데이트');
   };
 
   const handleSubTitleChange = (text) => {
     setEditedSubTitle(text);
+    console.log('링크 업데이트');
   };
 
   const handleContentChange = (text) => {
     setEditedContent(text);
+    console.log('내용 업데이트');
   };
 
   const handleEditButtonClick = () => {
@@ -136,13 +138,14 @@ const EditPortfolioData = async (updatedData) => {
   const handleSaveButtonClick = () => {
     // 저장 버튼 클릭 시 편집 모드 비활성화 등의 처리
     setIsEditMode(false);
+    setDeleteButtonVisible(true);
   };
 
   const handleSaveButton = async () => {
     const updatedButton = {
       title: editedTitle,       // 사용자가 편집한 제목
-      subTitle: editedSubTitle, // 사용자가 편집한 부제목
-      content: editedContent,   // 사용자가 편집한 내용
+      urlLink: editedSubTitle, // 사용자가 편집한 부제목
+      description: editedContent,   // 사용자가 편집한 내용
     };
   
     try {
@@ -189,7 +192,7 @@ const EditPortfolioData = async (updatedData) => {
   const confirmDelete = () => {
     deletePortfolioData();
     setShowPopup(false); // 팝업 닫기
-    navigation.navigate('PortfolioList');
+    navigation.navigate('Main');
   };
 
   const cancelDelete = () => {
