@@ -43,10 +43,11 @@ export default function EmailScreen() {
     try {
       const response = await axios.get(`http://3.39.104.119:8080/member/join/verify/${verificationCode}`);
       console.log(response.data);
-      if (response.data === String(verificationCode)) {
+      if (response.data === "인증에 성공하였습니다.") {
         
         setShowSuccessMessage(true);
         setShowErrorText(false);
+        navigation.navigate('Register');
       } else {
         setShowSuccessMessage(false);
         setShowErrorText(true);

@@ -21,15 +21,21 @@ export default function ActivityScreen({ route }) {
 
     const [heartFilled, setHeartFilled] = useState(false);
 
-  const toggleHeart = async () => {
     const headers = {
       Authorization: `Bearer ${token}`
     };
 
+    useEffect(() => {
+      fetchActivityDetail();
+      fetchRecActivityDetail();
+    }, []);
+
+  const toggleHeart = async () => {
+
     console.log(activityId)
     if (heartFilled === false) {
       try {
-      const response = await axios.post(`${LIKE_URL}${activityId}`,{ headers });
+      const response = await axios.post(`${LIKE_URL}${activityId}`, {  headers });
       if (response.status === 200) {
         console.log(response.data);
         setHeartFilled(true);
@@ -54,15 +60,10 @@ export default function ActivityScreen({ route }) {
   };
 
   
-    useEffect(() => {
-      fetchActivityDetail();
-      fetchRecActivityDetail();
-    }, []);
-  
     const fetchActivityDetail = async () => {
-        const headers = {
-            Authorization: `Bearer ${token}`
-          };
+        // const headers = {
+        //     Authorization: `Bearer ${token}`
+        //   };
 
       try {
         const response = await axios.get(`${API_URL}?id=${activityId}`, { headers });
@@ -98,9 +99,6 @@ export default function ActivityScreen({ route }) {
 
     // Get List of Recommend System
     const fetchRecActivityDetail = async () => {
-      const headers = {
-          Authorization: `Bearer ${token}`
-        };
 
     try {
       const response = await axios.get(`${R_API_URL}${activityId}`);
