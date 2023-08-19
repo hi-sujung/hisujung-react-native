@@ -101,6 +101,7 @@ export default function App() {
           component={ActivityScreen}
           options={{ headerShown: false }}
         /> 
+        
         </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>
