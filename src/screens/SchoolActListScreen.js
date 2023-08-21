@@ -191,10 +191,10 @@ export default function SchoolActListScreen({route}) {
       renderItem={({ item }) => (
         <TouchableOpacity
           style={styles.activityItem}
-          onPress={() => navigation.navigate('SchoolActivity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
+          onPress={() => navigation.navigate('SchoolAct', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
         >
           <View style={styles.activityDetails}>
-            <Text style={styles.activityCategory}>교내활동</Text>
+            <Text style={styles.activityCategory}>공지사항</Text>
             {/* <Text style={styles.activityDday}>D-10</Text> */}
           </View>
           <Text style={styles.activityItemTitle}>{item.title}</Text>

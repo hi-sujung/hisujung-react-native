@@ -7,17 +7,16 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './../utils/AuthContext';
 
 const API_URL = 'http://3.39.104.119/univactivity/id';
-const R_API_URL = 'http://3.39.104.119:5000/recommend/univ?activity_name=60';
+const R_API_URL = 'http://3.39.104.119:8000/recommend/univ?activity_name=';
+
+const LIKE_URL = 'http://3.39.104.119//univactivity/like'
+const LIKECANCEL_URL = 'http://3.39.104.119//univactivity/likecancel?id='
 
 export default function ActivityScreen({ route }) {
   const [heartFilled, setHeartFilled] = useState(false);
-
-  const toggleHeart = () => {
-    setHeartFilled(!heartFilled);
-  };
     const { activityId } = route.params;
     const [activityData, setActivityData] = useState({});
-    const [recActivityData, setRecActivityData] = useState({});
+    const [recActivityData, setRecActivityData] = useState([]);
     const { token } = useAuth();
     const navigation = useNavigation();
   
@@ -32,7 +31,7 @@ export default function ActivityScreen({ route }) {
           };
 
       try {
-        const response = await axios.get(`${API_URL}?id=${activityId}`, { headers });
+        const response = await axios.get(`${API_URL}?actId=${activityId}`, { headers });
         if (response.status === 200) {
           setActivityData(response.data);
           // if (activityData && activityData.content) {
@@ -48,6 +47,41 @@ export default function ActivityScreen({ route }) {
       
     };
 
+    const toggleHeart = async () => {
+
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
+  
+      console.log(activityId)
+      if (heartFilled === false) {
+        try {
+          const response1 = await axios.post(`${LIKE_URL}?actId=${activityId}`, null, {  headers });
+        if (response1.status === 200) {
+          console.log(response1.data);
+          setHeartFilled(true);
+        }
+  
+        } catch(error) {
+          console.error('Error fetching like:', error);
+        }
+      }
+      else {
+        try{
+        const response2 = await axios.delete(`${LIKECANCEL_URL}${activityId}`,{ headers });
+        if (response2.status === 200) {
+          console.log(response2.data);
+          setHeartFilled(false);
+        }
+        }catch(error) {
+          console.error('Error fetching delete like cancel:', error);
+        }
+      }
+  
+      navigation.navigate('SchoolAct', { activityId: activityData.id })
+    
+    };
+
     // Frommated Content
     const handleReplace = () => {
       if (activityData && activityData.content) {
@@ -59,133 +93,118 @@ export default function ActivityScreen({ route }) {
     };
     const formattedContent = handleReplace();
 
-    // Get List of Recommend System
-    const fetchRecActivityDetail = async () => {
-      const headers = {
-          Authorization: `Bearer ${token}`
-        };
+  // Get List of Recommend System
+  const fetchRecActivityDetail = async () => {
 
     try {
-      const response = await axios.get(R_API_URL);
+      const response = await axios.get(`${R_API_URL}${activityId}`);
       if (response.status === 200) {
         setRecActivityData(response.data);
+        console.log(response.data)
       }
     } catch (error) {
-      console.error('Error fetching activity detail:', error);
+      console.error('Error fetching Rec activity detail:', error);
     }
     
   };
 
     const handleActListPress = () => {
-        navigation.navigate('ActList'); 
+        navigation.navigate('SchoolActList'); 
       };
 
       const handleActivityPress = () => {
-        navigation.navigate('Activity');
+        navigation.navigate('SchoolAct');
       };
 
       const handleHomePress = () => {
         navigation.navigate('Main'); 
       };
 
-  return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['#E2D0F8', '#A0BFE0']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.linearGradient}
-      >
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleHomePress} style={styles.homeButton}>
-            <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={handleActListPress}>
-            <Text style={styles.headerTitle}>게시물 목록</Text>
-            </TouchableOpacity>
-        </View>
-      </LinearGradient>
-      <View style={styles.nav}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navContent}>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>전체</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>기획</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>아이디어</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>브랜드/네이밍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>광고/마케팅</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>사진</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>개발/프로그래밍</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-
-      <View style={styles.main}>
-        <ScrollView contentContainerStyle={styles.activityList}>
-          <View style={styles.activityItem}>
-            <View style={styles.activityDetails}>
-              <Text style={styles.activityCategory}>공지사항</Text>
-              {/* <Text style={styles.activityDday}>D-10</Text> */}
-            </View>
-            <ScrollView>
-            <Text style={styles.activityItemTitle}>{activityData.title}</Text>
-            <Text style={styles.activitySubTitle}>{activityData.link}</Text>
-            <Text style={styles.activityDescription}>{formattedContent}</Text>
-            </ScrollView>
-            <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
-              <AntDesign
-                name={heartFilled ? 'heart' : 'hearto'}
-                size={20}
-                color={heartFilled ? 'red' : 'black'}
-              />
-            </TouchableOpacity>
-            </View>
-        </ScrollView>
-
-        {/* 추천 게시물 */}
-        <View style={styles.recommended}>
-          {/* <Text style={styles.recommendedTitle}>추천 게시물</Text>
-          <FlatList
-            data={setRecActivityData}
-            keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
-            renderItem={({ item }) => (
-              <TouchableOpacity
-              style={styles.recommendedItem}
-                onPress={() => navigation.navigate('Activity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
-              >
-               <Text style={styles.recommendedItemTitle}>{item.title}</Text>
-             </TouchableOpacity>
-          )}
-          /> */}
-
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-          {/* 여기에 3개 더 추가 */}
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.recommendedItem}>
-            <Text style={styles.recommendedItemTitle}>추천 게시물 1</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      return (
+        <View style={styles.container}>
+  <LinearGradient
+    colors={['#E2D0F8', '#A0BFE0']}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={styles.linearGradient}
+  >
+    <View style={styles.header}>
+      <TouchableOpacity onPress={handleHomePress} style={styles.homeButton}>
+        <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleActListPress}>
+        <Text style={styles.headerTitle}>게시물 목록</Text>
+      </TouchableOpacity>
     </View>
-  );
+  </LinearGradient>
+  <View style={styles.nav}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navContent}>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>전체</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>기획</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>아이디어</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>브랜드/네이밍</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>광고/마케팅</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>사진</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton}>
+        <Text style={styles.navButtonText}>개발/프로그래밍</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  </View>
+
+  <View style={styles.main}>
+    <ScrollView contentContainerStyle={styles.activityList}>
+      <View style={styles.activityItem}>
+        <View style={styles.activityDetails}>
+          <Text style={styles.activityCategory}>공지사항</Text>
+          {/* <Text style={styles.activityDday}>D-10</Text> */}
+        </View>
+        <ScrollView>
+          <Text style={styles.activityItemTitle}>{activityData.title}</Text>
+          <Text style={styles.activityDescription}>게시일: {activityData.startDate}</Text>
+          <Text style={styles.activitySubTitle}>{activityData.link}</Text>
+          <Text style={styles.activityDescription}>{activityData.postDepartment}</Text>
+          
+        </ScrollView>
+      </View>
+    </ScrollView>
+
+    <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+      <AntDesign
+        name={heartFilled ? 'heart' : 'hearto'}
+        size={20}
+        color={heartFilled ? 'red' : 'black'}
+      />
+    </TouchableOpacity>
+
+    {/* 추천 게시물 */}
+    <View style={styles.recommended}>
+      <Text style={styles.recommendedTitle}>추천 게시물</Text>
+      <ScrollView>
+      {recActivityData.map(item => (
+        <TouchableOpacity style={styles.recommendedItem} onPress={() => navigation.push('SchoolAct', { activityId: item.univactivity_act_id })}>
+          <Text style={styles.recommendedItemTitle}>{item.title}</Text>
+        </TouchableOpacity>
+      ))}
+      </ScrollView>
+      
+    </View>
+  </View>
+</View>
+
+      );
+      
 }
 
 const styles = StyleSheet.create({
@@ -248,11 +267,10 @@ const styles = StyleSheet.create({
   activityList: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    height: '90%', // Adjusted height to make room for recommended items
+    // height: 1200, // Adjusted height to make room for recommended items
   },
   activityItem: {
     width: '100%',
-    height: 700, // Adjusted height for the activity item
     backgroundColor: 'rgba(226, 208, 248, 0.3)',
     borderRadius: 10,
     paddingVertical: 10,
@@ -279,6 +297,7 @@ const styles = StyleSheet.create({
   activitySubTitle: {
     fontSize: 14,
     color: 'rgba(74, 85, 162, 1)',
+    marginTop:5,
     marginBottom: 5,
   },
   activityDescription: {
@@ -286,6 +305,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   recommended: {
+    height: 300,
     marginTop: 20,
     marginBottom: 30,
     paddingHorizontal: 20, // Added paddingHorizontal to center the recommended items
@@ -311,7 +331,7 @@ const styles = StyleSheet.create({
     color: 'rgba(74, 85, 162, 1)',
   },
   heartButton: {
-    marginTop: 10,
+    // marginTop: 10,
     alignItems: 'flex-end',
   },
 });

@@ -204,19 +204,7 @@ export default function ActivityScreen({ route }) {
         {/* 추천 게시물 */}
         <View style={styles.recommended}>
           <Text style={styles.recommendedTitle}>추천 게시물</Text>
-          {/* <FlatList
-            data={setRecActivityData}
-            keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
-            renderItem={({ item }) => (
-              <TouchableOpacity
-              style={styles.recommendedItem}
-                onPress={() => navigation.navigate('Activity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
-              >
-               <Text style={styles.recommendedItemTitle}>{item.title}</Text>
-             </TouchableOpacity>
-          )}
-          /> */}
-
+          
           {recActivityData.map(item => (
              <TouchableOpacity style={styles.recommendedItem} onPress={() => navigation.push('Activity', {activityId : item.external_act_id})}>
              <Text style={styles.recommendedItemTitle}>{item.title}</Text>
@@ -350,7 +338,7 @@ const styles = StyleSheet.create({
     color: 'rgba(74, 85, 162, 1)',
   },
   heartButton: {
-    marginTop: 10,
+    // marginTop: 10,
     alignItems: 'flex-end',
   },
 });
