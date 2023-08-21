@@ -1,5 +1,5 @@
 import React, { useState, useEffect  } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView, Modal, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
@@ -11,9 +11,8 @@ const API_URL = 'http://3.39.104.119/portfolio/';
 
 export default function myportfolioScreen({ route }) {
   const { portfolioId } = route.params;
- // const { portfolioId } = route.params;
   const [portfolioData, setPortfolio] = useState({});
-
+  // const [username, setUsername] = useState('');
   const [navigationButtons, setNavigationButtons] = useState([]);
   const [selectedButton, setSelectedButton] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -24,7 +23,7 @@ export default function myportfolioScreen({ route }) {
   const [deleteButtonVisible, setDeleteButtonVisible] = useState(true);
 
  // const [portfolio, setPortfolio] = useState([]);
-  const { token } = useAuth(); // 현재 로그인한 유저의 user, token
+  const { user, token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation(); // Initialize navigation
   // if (!route.params || !route.params.portfolioId) {
   //   // Handle the case when portfolioId is not available
@@ -41,7 +40,7 @@ export default function myportfolioScreen({ route }) {
       const response = await axios.get(`${API_URL}id?id=${portfolioId}`);
       if (response.status === 200) {
         setPortfolio(response.data.data); // Set the fetched activity data in the state
-        console.log('상세페이지 불러옴')
+        console.log('상세페이지 불러옴');
       }
     } catch (error) {
       console.error('Error fetching activity data:', error);
@@ -83,6 +82,7 @@ const EditPortfolioData = async (updatedData) => {
       if (response.status === 200) {
         // 포트폴리오 삭제 성공 시 처리
         console.log('포트폴리오가 삭제되었습니다.');
+        Alert.alert('포트폴리오가 삭제되었습니다.');
       } else {
         console.error('Error deleting portfolio:', response.status);
       }
@@ -158,28 +158,6 @@ const EditPortfolioData = async (updatedData) => {
     }
   };
 
-  // const handleSaveButton = async () => {
-  //   const updatedButtons = navigationButtons.map((button) => {
-  //     if (button === selectedButton) {
-  //       return { ...button, title: editedTitle, subTitle: editedSubTitle, content: editedContent };
-  //     }
-  //     return button;
-  //   });
-
-  //   // 이제 EditPortfolioData 함수 호출
-  //   try {
-  //     await EditPortfolioData(); // 서버에 수정된 데이터를 저장
-  //   } catch (error) {
-  //     console.error('Error editing portfolio data:', error);
-  //   }
-  
-  //   setNavigationButtons(updatedButtons); // 수정된 버튼 정보를 업데이트
-
-  //   setIsEditMode(false); // 편집 모드 비활성화
-  //   fetchPortfolioData();
-   
-  // };
-
   const handleHomePress = () => {
     navigation.navigate('Main'); 
   };
@@ -208,7 +186,7 @@ const EditPortfolioData = async (updatedData) => {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>포트폴리오 관리</Text>
       </View>
-      <View style={styles.nav}>
+      {/* <View style={styles.nav}>
         <LinearGradient
           colors={['#E2D0F8', '#A0BFE0']}
           start={{ x: 0, y: 0 }}
@@ -234,7 +212,7 @@ const EditPortfolioData = async (updatedData) => {
             </TouchableOpacity>
           </ScrollView>
         </LinearGradient>
-      </View>
+      </View> */}
 
       <View style={styles.main}>
         <View style={styles.portfolioInfo}>
@@ -254,7 +232,7 @@ const EditPortfolioData = async (updatedData) => {
             >{isEditMode ? '완료' : '수정'}</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.name}>{portfolioData.username}서가은 수정 </Text>
+        <Text style={styles.name}>{user.name} 수정 </Text>
         <Text style={styles.infoLabel}>포트폴리오 제목</Text>
         {isEditMode ? ( // 편집 모드일 때
         <TextInput
@@ -313,11 +291,22 @@ const EditPortfolioData = async (updatedData) => {
         </View>
       </Modal>
 
-        {isEditMode && (
+      
+            {isEditMode && (
+              <LinearGradient
+              colors={['#E2D0F8', '#A0BFE0']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={[styles.saveButton]} // Combine styles
+              >
+                
           <TouchableOpacity style={styles.saveButton} onPress={handleSaveButton}>
             <Text style={styles.saveButtonText}>저장하기</Text>
           </TouchableOpacity>
+          </LinearGradient>
         )}
+          
+
       </View>
     </View>
   );
@@ -441,6 +430,7 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 14,
     fontWeight: 'bold',
+    marginTop: 10,
     marginBottom: 5,
   },
   infoInput: {
@@ -454,19 +444,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(226, 208, 248, 0.3)',
     borderRadius: 10,
     padding: 15,
-    marginBottom: 10,
+    marginBottom: 30,
     textAlignVertical: 'top',
   },
   saveButton: {
-    backgroundColor: 'rgba(160, 191, 224, 1)',
+    // backgroundColor: 'rgba(160, 191, 224, 1)',
+    height:70,
     borderRadius: 20,
     paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    textAlign: 'center',
+    alignSelf: 'center',
+    // marginTop: 30,
+    width: '60%',
+    position: 'relative',
   },
   saveButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 20,
   },
   portfolioNavTitle: {
     color: 'rgba(74, 85, 162, 1)',

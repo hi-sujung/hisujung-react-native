@@ -10,7 +10,7 @@ const API_URL = 'http://3.39.104.119/portfolio/portfoliolist';
 
 export default function portfolioListScreen() {
   const [portfolioList, setPortfolioList] = useState([]);
-  const { token } = useAuth(); // 현재 로그인한 유저의 user, token
+  const { user, token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,10 +30,35 @@ export default function portfolioListScreen() {
       console.error('Error fetching activity data:', error);
     }
   };
+
+  const createPortfolio = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    try {
+      const response = await axios.get(API_URL, { headers });
+      if (response.status === 200) {
+        setPortfolioList(response.data.data); // Set the fetched activity data in the state
+      }
+    } catch (error) {
+      console.error('Error Creating activity data:', error);
+    }
+  };
   
 
   const handleHomePress = () => {
     navigation.navigate('Main'); 
+  };
+
+  // 테스트용
+  const addNavigationButton = () => {
+    const newButton = {
+      title: `포트폴리오${navigationButtons.length + 1}`,
+      subTitle: `새로운 포트폴리오 ${navigationButtons.length + 1}`,
+      content: `새로운 내용 ${navigationButtons.length + 1}`,
+    };
+
+    setNavigationButtons([...navigationButtons, newButton]);
   };
 
     return (
@@ -52,10 +77,14 @@ export default function portfolioListScreen() {
               <TouchableOpacity>
                 <Text style={styles.headerTitle}>나의 포트폴리오 목록</Text>
                 </TouchableOpacity>
+                
             </View>
           </LinearGradient>
     
           <View style={styles.main}>
+          <TouchableOpacity style={styles.navButtonPlus} onPress={() => navigation.navigate('CreatePortfolio')}>
+              <Text style={styles.navButtonTextPlus}>추가</Text>
+            </TouchableOpacity>
               <FlatList
                 data={portfolioList}
                 keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
@@ -164,5 +193,18 @@ export default function portfolioListScreen() {
       activityItemTitle: {
         fontWeight: 'bold',
         fontSize: 16,
+      },
+      navButtonPlus: {
+        backgroundColor: 'transparent',
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        marginRight: 10,
+        marginBottom:13,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+      },
+      navButtonTextPlus: {
+        color: 'blue',
+        fontWeight: 'bold',
       },
     });

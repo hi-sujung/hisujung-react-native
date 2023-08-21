@@ -9,8 +9,10 @@ import { useAuth } from './../utils/AuthContext';
 const API_URL = 'http://3.39.104.119/externalact/id';
 const R_API_URL = 'http://3.39.104.119:8000/recommend/external?activity_name=';
 
-const LIKE_URL = 'http://3.39.104.119/externalact/like?actId='
-const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel?id='
+// const LIKE_URL = 'http://3.39.104.119/externalact/like?actId='
+const LIKE_URL = 'http://3.39.104.119/externalact/like'
+// const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel?id='
+const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel'
 
 export default function ActivityScreen({ route }) {
     const { activityId } = route.params;
@@ -19,7 +21,7 @@ export default function ActivityScreen({ route }) {
     const { token } = useAuth();
     const navigation = useNavigation();
 
-    const [heartFilled, setHeartFilled] = useState(false);
+    const [heartFilled, setHeartFilled] = useState('');
 
     const headers = {
       Authorization: `Bearer ${token}`
@@ -35,7 +37,8 @@ export default function ActivityScreen({ route }) {
     console.log(activityId)
     if (heartFilled === false) {
       try {
-      const response = await axios.post(`${LIKE_URL}${activityId}`, {  headers });
+        console.log(heartFilled)
+      const response = await axios.post(`${LIKE_URL}?actId=${activityId}`, {  headers });
       if (response.status === 200) {
         console.log(response.data);
         setHeartFilled(true);
@@ -47,7 +50,7 @@ export default function ActivityScreen({ route }) {
     }
     else {
       try{
-      const response2 = await axios.delete(`${LIKECANCEL_URL}${activityId}`,{ headers });
+      const response2 = await axios.delete(`${LIKECANCEL_URL}?id=${activityId}`,{ headers });
       if (response2.status === 200) {
         console.log(response2.data);
         setHeartFilled(false);
@@ -56,6 +59,8 @@ export default function ActivityScreen({ route }) {
         console.error('Error fetching delete like cancel:', error);
       }
     }
+
+    navigation.navigate('Activity', { activityId: activityData.id })
   
   };
 
@@ -72,10 +77,10 @@ export default function ActivityScreen({ route }) {
           console.log(response.data.isLiked);
           
         }
-        if (response.data.isLiked === 0) {
+        if (activityData.isLiked === 0) {
           setHeartFilled(false);
         }
-        else if (response.data.isLiked === 1) {
+        else if (activityData.isLiked === 1) {
           setHeartFilled(true);
         }
       } catch (error) {

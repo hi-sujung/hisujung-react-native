@@ -7,10 +7,12 @@ import PortfolioListScreen from './PortfolioListScreen'; // myportfolio.js 파�
 import NoticeLikeScreen from './viewNoticeLike'
 import chatBotScreen from './ChatScreen'; 
 import { AntDesign } from '@expo/vector-icons';
+import { useAuth } from './../utils/AuthContext';
 
 const Stack = createStackNavigator();
 
 export default function MainScreen({ navigation }) {
+  const { user } = useAuth();
   return (
     <LinearGradient
       colors={['#E2D0F8', '#A0BFE0']}
@@ -22,7 +24,7 @@ export default function MainScreen({ navigation }) {
       <TouchableOpacity onPress={() => navigation.navigate('viewNoticeLike')}>
       <AntDesign name="hearto" size={24} color="white" style={{ marginleft: 20 }} />
     </TouchableOpacity>
-        <Text style={styles.title}>Hi, 000 수정이🔮</Text>
+        <Text style={styles.title}>Hi, {user.name} 수정이🔮</Text>
       </View>
       <View style={styles.container}>
         <View style={styles.outerBox}>

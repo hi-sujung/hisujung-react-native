@@ -18,6 +18,7 @@ import MainScreen from './screens/MainScreen';
 import PortfolioListScreen from './screens/PortfolioListScreen';
 import viewNoticeLike from './screens/viewNoticeLike';
 import ChatScreen from './screens/ChatScreen';
+import CreatePortfolioScreen from './screens/CreatePortfolioScreen';
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,12 @@ export default function App() {
         <Stack.Screen
           name="PortfolioList"
           component={PortfolioListScreen}
+          options={{ headerShown: false }}
+        /> 
+        {/* 포트폴리오 생성 페이지 */}
+        <Stack.Screen
+          name="CreatePortfolio"
+          component={CreatePortfolioScreen}
           options={{ headerShown: false }}
         /> 
         {/* 포트폴리오 상세페이지 */}
