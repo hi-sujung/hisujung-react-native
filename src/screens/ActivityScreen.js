@@ -9,10 +9,8 @@ import { useAuth } from './../utils/AuthContext';
 const API_URL = 'http://3.39.104.119/externalact/id';
 const R_API_URL = 'http://3.39.104.119:8000/recommend/external?activity_name=';
 
-// const LIKE_URL = 'http://3.39.104.119/externalact/like?actId='
 const LIKE_URL = 'http://3.39.104.119/externalact/like'
-// const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel?id='
-const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel'
+const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel?id='
 
 export default function ActivityScreen({ route }) {
     const { activityId } = route.params;
@@ -21,48 +19,13 @@ export default function ActivityScreen({ route }) {
     const { token } = useAuth();
     const navigation = useNavigation();
 
-    const [heartFilled, setHeartFilled] = useState('');
-
-    const headers = {
-      Authorization: `Bearer ${token}`
-    };
+    const [heartFilled, setHeartFilled] = useState(false);
 
     useEffect(() => {
       fetchActivityDetail();
       fetchRecActivityDetail();
     }, []);
 
-  const toggleHeart = async () => {
-
-    console.log(activityId)
-    if (heartFilled === false) {
-      try {
-        console.log(heartFilled)
-      const response = await axios.post(`${LIKE_URL}?actId=${activityId}`, {  headers });
-      if (response.status === 200) {
-        console.log(response.data);
-        setHeartFilled(true);
-      }
-
-      } catch(error) {
-        console.error('Error fetching like:', error);
-      }
-    }
-    else {
-      try{
-      const response2 = await axios.delete(`${LIKECANCEL_URL}?id=${activityId}`,{ headers });
-      if (response2.status === 200) {
-        console.log(response2.data);
-        setHeartFilled(false);
-      }
-      }catch(error) {
-        console.error('Error fetching delete like cancel:', error);
-      }
-    }
-
-    navigation.navigate('Activity', { activityId: activityData.id })
-  
-  };
 
   
     const fetchActivityDetail = async () => {
@@ -70,6 +33,12 @@ export default function ActivityScreen({ route }) {
         //     Authorization: `Bearer ${token}`
         //   };
 
+        const headers = {
+          Authorization: `Bearer ${token}`
+        };
+    
+
+        
       try {
         const response = await axios.get(`${API_URL}?id=${activityId}`, { headers });
         if (response.status === 200) {
@@ -90,6 +59,43 @@ export default function ActivityScreen({ route }) {
     };
 
     
+    const toggleHeart = async () => {
+
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
+  
+      console.log(headers)
+  
+      console.log(activityId)
+      if (heartFilled === false) {
+        try {
+          console.log(heartFilled)
+          const response1 = await axios.post(`${LIKE_URL}?actId=${activityId}`, null, {  headers });
+        if (response1.status === 200) {
+          console.log(response1.data);
+          setHeartFilled(true);
+        }
+  
+        } catch(error) {
+          console.error('Error fetching like:', error);
+        }
+      }
+      else {
+        try{
+        const response2 = await axios.delete(`${LIKECANCEL_URL}${activityId}`,{ headers });
+        if (response2.status === 200) {
+          console.log(response2.data);
+          setHeartFilled(false);
+        }
+        }catch(error) {
+          console.error('Error fetching delete like cancel:', error);
+        }
+      }
+  
+      navigation.navigate('Activity', { activityId: activityData.id })
+    
+    };
 
     // Frommated Content
     const handleReplace = () => {
