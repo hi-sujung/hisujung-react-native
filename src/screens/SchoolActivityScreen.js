@@ -9,8 +9,8 @@ import { useAuth } from './../utils/AuthContext';
 const API_URL = 'http://3.39.104.119/univactivity/id';
 const R_API_URL = 'http://3.39.104.119:8000/recommend/univ?activity_name=';
 
-const LIKE_URL = 'http://3.39.104.119//univactivity/like'
-const LIKECANCEL_URL = 'http://3.39.104.119//univactivity/likecancel?id='
+const LIKE_URL = 'http://3.39.104.119/univactivity/like';
+const LIKECANCEL_URL = 'http://3.39.104.119/univactivity/likecancel?id=';
 
 export default function ActivityScreen({ route }) {
   const [heartFilled, setHeartFilled] = useState(false);
@@ -30,20 +30,22 @@ export default function ActivityScreen({ route }) {
             Authorization: `Bearer ${token}`
           };
 
-      try {
-        const response = await axios.get(`${API_URL}?actId=${activityId}`, { headers });
-        if (response.status === 200) {
-          setActivityData(response.data);
-          // if (activityData && activityData.content) {
-          //   const formattedContent = activityData.content.replace(/\n/g, '\n');
-          //   console.log('content: ' + formattedContent);
-          // } else {
-          //   console.log('activityData or content is undefined');
-          // }
-        }
-      } catch (error) {
-        console.error('Error fetching activity detail:', error);
-      }
+          try {
+            const response = await axios.get(`${API_URL}?actId=${activityId}`, { headers });
+            if (response.status === 200) {
+              setActivityData(response.data);
+              console.log(response.data.isLiked);
+              
+            }
+            if (activityData.isLiked === 0) {
+              setHeartFilled(false);
+            }
+            else if (activityData.isLiked === 1) {
+              setHeartFilled(true);
+            }
+          } catch (error) {
+            console.error('Error fetching activity detail:', error);
+          }
       
     };
 
@@ -105,6 +107,8 @@ export default function ActivityScreen({ route }) {
     } catch (error) {
       console.error('Error fetching Rec activity detail:', error);
     }
+
+    navigation.navigate('SchoolAct', { activityId: activityData.id })
     
   };
 
@@ -193,7 +197,7 @@ export default function ActivityScreen({ route }) {
       <Text style={styles.recommendedTitle}>추천 게시물</Text>
       <ScrollView>
       {recActivityData.map(item => (
-        <TouchableOpacity style={styles.recommendedItem} onPress={() => navigation.push('SchoolAct', { activityId: item.univactivity_act_id })}>
+        <TouchableOpacity style={styles.recommendedItem} onPress={() => navigation.push('SchoolAct', { activityId: item.univ_activity_id })}>
           <Text style={styles.recommendedItemTitle}>{item.title}</Text>
         </TouchableOpacity>
       ))}

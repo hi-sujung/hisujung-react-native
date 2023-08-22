@@ -1,10 +1,36 @@
-import React from 'react';
 import { View, Text,TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { AntDesign } from '@expo/vector-icons';
+import { useAuth } from '../utils/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+
+const API_URL = 'http://3.39.104.119/univactivity/likelist';
 
 export default function NoticeScreen(props) {
-  const { navigation } = props; // navigation과 token을 추출
+  const [likeList, setLikeList] = useState([]);
+  const { user, token } = useAuth(); // 현재 로그인한 유저의 user, token
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    fetchPortfolioData();
+  }, []);
+
+  const fetchLikeData = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    try {
+      const response = await axios.get(API_URL, { headers });
+      if (response.status === 200) {
+        setLikeList(response.data); // Set the fetched activity data in the state
+      }
+    } catch (error) {
+      console.error('Error fetching like list data:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -22,33 +48,27 @@ export default function NoticeScreen(props) {
       </LinearGradient>
 
       <View style={styles.main}>
-
-        <ScrollView contentContainerStyle={styles.activityList}>
-          {/* 활동 1 */}
-          <TouchableOpacity style={styles.activityItem}>
-            <View style={styles.activityDetails}>
-              <Text style={styles.activityCategory}>대외활동</Text>
-              <Text style={styles.activityDday}>D-10</Text>
-            </View>
-            <Text style={styles.activityItemTitle}>활동 1</Text>
-          </TouchableOpacity>
-          {/* 활동 2 */}
-          <TouchableOpacity style={styles.activityItem}>
-            <View style={styles.activityDetails}>
-              <Text style={styles.activityCategory}>대외활동</Text>
-              <Text style={styles.activityDday}>D-5</Text>
-            </View>
-            <Text style={styles.activityItemTitle}>활동 2</Text>
-          </TouchableOpacity>
-          {/* 활동 3 */}
-          <TouchableOpacity style={styles.activityItem}>
-            <View style={styles.activityDetails}>
-              <Text style={styles.activityCategory}>대외활동</Text>
-              <Text style={styles.activityDday}>D-20</Text>
-            </View>
-            <Text style={styles.activityItemTitle}>활동 3</Text>
-          </TouchableOpacity>
-        </ScrollView>
+      <FlatList
+                data={likeList}
+                keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.activityItem}
+                    onPress={() => navigation.navigate('Activity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
+                  >
+                    <View style={styles.activityDetails}>
+                      <Text style={styles.activityCategory}></Text>
+                      {/* <Text style={styles.activityDday}>D-10</Text> */}
+                    </View>
+                    <Text style={styles.activityItemTitle}>{item.title}</Text>
+                    <Text style={styles.activityDetails}>{item.description}</Text>
+                    <Text style={styles.activityItemTitle}>{item.urlLink}</Text>
+                    <Text style={styles.activityDday}>{item.createdDate}</Text>
+                    <Text style={styles.activityDday}>{item.modifiedDate}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+        
       </View>
     </View>
   );

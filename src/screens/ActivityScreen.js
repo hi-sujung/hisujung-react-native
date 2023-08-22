@@ -65,8 +65,6 @@ export default function ActivityScreen({ route }) {
         Authorization: `Bearer ${token}`
       };
   
-      console.log(headers)
-  
       console.log(activityId)
       if (heartFilled === false) {
         try {
