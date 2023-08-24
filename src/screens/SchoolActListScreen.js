@@ -177,7 +177,7 @@ export default function SchoolActListScreen({route}) {
           />
           <TouchableOpacity
             style={styles.sendButton}
-            onPress={() => navigation.push('ActList', {search : keyword})}
+            onPress={() => navigation.push('SchoolActList', {search : keyword})}
           >
             <Text>검색</Text>
         </TouchableOpacity>

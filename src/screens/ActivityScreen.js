@@ -13,13 +13,13 @@ const LIKE_URL = 'http://3.39.104.119/externalact/like'
 const LIKECANCEL_URL = 'http://3.39.104.119/externalact/likecancel?id='
 
 export default function ActivityScreen({ route }) {
+    const [initialLikedState, setInitialLikedState] = useState(false);
+    const [heartFilled, setHeartFilled] = useState('');
     const { activityId } = route.params;
     const [activityData, setActivityData] = useState({});
     const [recActivityData, setRecActivityData] = useState([]);
     const { token } = useAuth();
     const navigation = useNavigation();
-
-    const [heartFilled, setHeartFilled] = useState(false);
 
     useEffect(() => {
       fetchActivityDetail();
@@ -44,7 +44,8 @@ export default function ActivityScreen({ route }) {
         if (response.status === 200) {
           setActivityData(response.data);
           console.log(response.data.isLiked);
-          
+          setInitialLikedState(response.data.isLiked === 1);
+          setHeartFilled(response.data.isLiked === 1);
         }
         if (activityData.isLiked === 0) {
           setHeartFilled(false);

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AuthProvider } from './utils/AuthContext'; // app에서 navigation을 AuthProvider로 감싸야 함
-import myportfolioScreen from './screens/myportfolioScreen';
+import MyportfolioScreen from './screens/MyportfolioScreen';
 import LoginScreen from './screens/LoginScreen';
 import ActivityScreen from './screens/ActivityScreen';
 import ActListScreen from './screens/ActListScreen';
@@ -81,7 +81,7 @@ export default function App() {
         {/* 포트폴리오 상세페이지 */}
         <Stack.Screen
           name="myportfolio"
-          component={myportfolioScreen}
+          component={MyportfolioScreen}
           options={{ headerShown: false }}
         />
         {/* 교내활동 리스트 */}

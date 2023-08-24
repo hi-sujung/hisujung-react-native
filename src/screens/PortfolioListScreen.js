@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const API_URL = 'http://3.39.104.119/portfolio/portfoliolist';
 
-export default function portfolioListScreen() {
+export default function PortfolioListScreen() {
   const [portfolioList, setPortfolioList] = useState([]);
   const { user, token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation();

@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 const API_URL = 'http://3.39.104.119/portfolio/';
 
 
-export default function myportfolioScreen({ route }) {
+export default function MyportfolioScreen({ route }) {
   const { portfolioId } = route.params;
   const [portfolioData, setPortfolio] = useState({});
   // const [username, setUsername] = useState('');

@@ -3,6 +3,7 @@ import { Linking, View, Text, TextInput, TouchableOpacity, StyleSheet } from 're
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
 const API_URL = 'http://3.39.104.119/member/join';
 
@@ -41,7 +42,10 @@ export default function RegisterScreen({ navigation }) {
         setShowErrorText(false);
         setErrorMessage('');
         
-        console.log('Register Successful')
+        console.log('Register Successful');
+
+        navigation.navigate('Login');
+
       } else {
         setShowSuccessMessage(false);
         setShowErrorText(true);

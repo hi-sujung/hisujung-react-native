@@ -1,4 +1,4 @@
-import { View, Text,TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text,TextInput, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -6,28 +6,46 @@ import { AntDesign } from '@expo/vector-icons';
 import { useAuth } from '../utils/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 
-const API_URL = 'http://3.39.104.119/univactivity/likelist';
+const UNI_API_URL = 'http://3.39.104.119/univactivity/likelist';
+const EXT_API_URL = 'http://3.39.104.119/externalact/likelist';
 
-export default function NoticeScreen(props) {
-  const [likeList, setLikeList] = useState([]);
+export default function NoticeScreen() {
+  const [uniLikeList, setUniLikeList] = useState([]);
+  const [extLikeList, setExtLikeList] = useState([]);
+
   const { user, token } = useAuth(); // 현재 로그인한 유저의 user, token
   const navigation = useNavigation();
 
   useEffect(() => {
-    fetchPortfolioData();
+    fetchUniLikeData();
+    fetchExtLikeData();
   }, []);
 
-  const fetchLikeData = async () => {
+  const fetchUniLikeData = async () => {
     const headers = {
       Authorization: `Bearer ${token}`
     };
     try {
-      const response = await axios.get(API_URL, { headers });
+      const response = await axios.get(UNI_API_URL, { headers });
       if (response.status === 200) {
-        setLikeList(response.data); // Set the fetched activity data in the state
+        setUniLikeList(response.data); // Set the fetched activity data in the state
       }
     } catch (error) {
-      console.error('Error fetching like list data:', error);
+      console.error('Error fetching uniLike list data:', error);
+    }
+  };
+
+  const fetchExtLikeData = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    try {
+      const response = await axios.get(EXT_API_URL, { headers });
+      if (response.status === 200) {
+        setExtLikeList(response.data); // Set the fetched activity data in the state
+      }
+    } catch (error) {
+      console.error('Error fetching external like list data:', error);
     }
   };
 
@@ -43,31 +61,38 @@ export default function NoticeScreen(props) {
           <TouchableOpacity onPress={() => navigation.navigate('Main')} style={styles.homeButton}>
             <AntDesign name="home" size={24} color="rgba(74, 85, 162, 1)" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>찜한 공지사항</Text>
+          <Text style={styles.headerTitle}>찜한 활동</Text>
         </View>
       </LinearGradient>
 
       <View style={styles.main}>
-      <FlatList
-                data={likeList}
-                keyExtractor={(item) => item.id.toString()} // Assuming 'id' is a unique identifier
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.activityItem}
-                    onPress={() => navigation.navigate('Activity', { activityId: item.id })} // Pass the activityId to the 'Activity' screen
-                  >
-                    <View style={styles.activityDetails}>
-                      <Text style={styles.activityCategory}></Text>
-                      {/* <Text style={styles.activityDday}>D-10</Text> */}
-                    </View>
-                    <Text style={styles.activityItemTitle}>{item.title}</Text>
-                    <Text style={styles.activityDetails}>{item.description}</Text>
-                    <Text style={styles.activityItemTitle}>{item.urlLink}</Text>
-                    <Text style={styles.activityDday}>{item.createdDate}</Text>
-                    <Text style={styles.activityDday}>{item.modifiedDate}</Text>
-                  </TouchableOpacity>
-                )}
-              />
+        {/* 찜한 공지사항 목록 */}
+        <FlatList
+  data={[...uniLikeList, ...extLikeList]}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => (
+    <TouchableOpacity
+      style={styles.activityItem}
+      onPress={() =>
+        item.postDepartment
+          ? navigation.navigate('SchoolAct', { activityId: item.id })
+          : navigation.navigate('Activity', { activityId: item.id })
+      }
+    >
+      <View style={styles.activityDetails}>
+        <Text style={styles.activityCategory}>
+          {item.postDepartment ? '공지사항' : '대외활동'}
+        </Text>
+      </View>
+      <Text style={styles.activityItemTitle}>{item.title}</Text>
+    </TouchableOpacity>
+  )}
+/>
+
+
+
+            {/* 찜한 대외활동 목록   */}
+      
         
       </View>
     </View>
@@ -134,6 +159,14 @@ const styles = StyleSheet.create({
   activityItemTitle: {
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  extLikeItem: {
+    width: '100%',
+    backgroundColor: 'rgba(226, 208, 248, 0.3)',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 10,
   },
   inputContainer: {
     width:"70%",
